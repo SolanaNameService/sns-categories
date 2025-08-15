@@ -22,9 +22,9 @@ declare_id_with_central_state!("6c4faDgogWngP5dFsj1AKFRDtn9zbsae3sgZPuaPfgLK");
 #[cfg(not(feature = "no-entrypoint"))]
 solana_security_txt::security_txt! {
     name: env!("CARGO_PKG_NAME"),
-    project_url: "http://bonfida.org",
-    contacts: "email:security@bonfida.com,link:https://twitter.com/bonfida",
-    policy: "https://immunefi.com/bounty/bonfida",
+    project_url: "https://sns.id",
+    contacts: "email:contact@sns.id,link:https://twitter.com/sns",
+    policy: "https://immunefi.com/bounty/sns",
     preferred_languages: "en",
     auditors: "Halborn"
 }
