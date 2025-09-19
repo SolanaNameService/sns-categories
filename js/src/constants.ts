@@ -112,5 +112,10 @@ export const CATEGORIES = new Map<string, string>([
   ["HzvyLcK3sNpSKFQAmjHr39UVF4dqHV49oafjW83M5kiE", "solmojis-10k-club"],
   ["4d7Di4EnxVinWVc1exeg65Py2heaKRiMcpMBQEiud2zG", "gen2-pokemon"],
   ["DwPLTYqMs4UwcziCjXwArTVXLzU9jbL2j4ZYdrRMh7Tg", "gen3-pokemon"],
-  ["4Wv5WV6nMo69vX1PxE9myCUpJ74xQRorzoHNeSmnyn2d", "water-margin"]
+  ["4Wv5WV6nMo69vX1PxE9myCUpJ74xQRorzoHNeSmnyn2d", "water-margin"],
+  ["3axhm6Z6uvoRdC15u2jtmYsC9TeuuGGqQHCcfX9oodxf", "gen1-japanese-pokemon"],
+  ["F7psdFya4ZLVftFzXBUuFA626CG8zbzGr5JnHFedVqSh", "nintendo-characters"],
+  ["Cm5PrJTGQBPT7XseaVp4zLmXFeDLURHiDpubUeQoqeSh", "anime"],
+  ["9Yqn3xRYeqdtL4Hn4chi9PrCbofxg9fHHwTFb9iAT4oK", "food-collection1"],
+  ["9tKvN4XK85qBwpec6iTjax4SwRecBpHMuLsWB7c2EVT4", "animals-collection1"],
 ]);
