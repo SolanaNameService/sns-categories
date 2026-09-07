@@ -9,16 +9,15 @@ use crate::{
 };
 use {
     bonfida_utils::{
-        checks::{check_account_key, check_account_owner, check_signer},
         BorshSize, InstructionsAccount,
+        checks::{check_account_key, check_account_owner, check_signer},
     },
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
-        account_info::{next_account_info, AccountInfo},
+        account_info::{AccountInfo, next_account_info},
         entrypoint::ProgramResult,
         program_error::ProgramError,
         pubkey::Pubkey,
-        system_program,
     },
 };
 
@@ -77,7 +76,10 @@ impl<'a, 'b: 'a> Accounts<'a, AccountInfo<'b>> {
         };
 
         // Check keys
-        check_account_key(accounts.system_program, &system_program::ID)?;
+        check_account_key(
+            accounts.system_program,
+            &solana_system_interface::program::ID,
+        )?;
         check_account_key(accounts.name_service_program, &spl_name_service::ID)?;
         check_account_key(accounts.central_state, &crate::central_state::KEY)?;
         #[cfg(not(feature = "no-signer"))]
@@ -85,7 +87,10 @@ impl<'a, 'b: 'a> Accounts<'a, AccountInfo<'b>> {
 
         // Check owners
         check_account_owner(accounts.category_metadata, &spl_name_service::ID)?;
-        check_account_owner(accounts.category_member, &system_program::ID)?;
+        check_account_owner(
+            accounts.category_member,
+            &solana_system_interface::program::ID,
+        )?;
 
         // Check signer
         check_signer(accounts.fee_payer)?;
@@ -117,7 +122,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], params: Params) ->
 
     cpi::name_service_update(
         0,
-        category_metadata.try_to_vec().unwrap(),
+        borsh::to_vec(&category_metadata).unwrap(),
         NameServiceUpdateAccounts {
             name_account: accounts.category_metadata,
             name_service_program: accounts.name_service_program,
@@ -149,7 +154,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], params: Params) ->
 
     cpi::name_service_update(
         0,
-        category_member.try_to_vec().unwrap(),
+        borsh::to_vec(&category_metadata).unwrap(),
         cpi::NameServiceUpdateAccounts {
             name_account: accounts.category_member,
             name_service_program: accounts.name_service_program,

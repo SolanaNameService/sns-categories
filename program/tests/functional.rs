@@ -1,23 +1,21 @@
 use std::str::FromStr;
 
 use crate::common::utils::sign_send_instructions;
-use borsh::BorshSerialize;
 use sns_categories::instruction::{add_member, create_category, remove_member};
 use sns_categories::state::category_member::CategoryMember;
 use sns_categories::state::category_metadata::CategoryMetadata;
-use sns_categories::state::{Tag, CATEGORY_TLD};
+use sns_categories::state::{CATEGORY_TLD, Tag};
 use sns_categories::utils::get_name_key;
 use sns_categories::{entrypoint::process_instruction, utils::get_hashed_name};
 use solana_program::program_pack::Pack;
 use solana_program::pubkey::Pubkey;
-use solana_program::system_program;
-use spl_name_service::state::{get_seeds_and_key, NameRecordHeader};
+use spl_name_service::state::{NameRecordHeader, get_seeds_and_key};
 use {
     borsh::BorshDeserialize,
-    solana_program_test::{processor, ProgramTest},
+    solana_program_test::{ProgramTest, processor},
     solana_sdk::{
         account::Account,
-        signer::{keypair::Keypair, Signer},
+        signer::{Signer, keypair::Keypair},
     },
 };
 pub mod common;
@@ -66,7 +64,7 @@ async fn test_offer() {
         sns_categories::state::CATEGORY_TLD,
         Account {
             lamports: 100_000_000_000,
-            data: category_tld_account.try_to_vec().unwrap(),
+            data: borsh::to_vec(&category_tld_account).unwrap(),
             ..Account::default()
         },
     );
@@ -82,7 +80,7 @@ async fn test_offer() {
 
     let ix = create_category(
         create_category::Accounts {
-            system_program: &system_program::ID,
+            system_program: &solana_system_interface::program::ID,
             name_service_program: &spl_name_service::ID,
             fee_payer: &prg_test_ctx.payer.pubkey(),
             central_state: &sns_categories::central_state::KEY,
@@ -110,7 +108,7 @@ async fn test_offer() {
     let ix = add_member(
         add_member::Accounts {
             name_service_program: &spl_name_service::ID,
-            system_program: &system_program::ID,
+            system_program: &solana_system_interface::program::ID,
             fee_payer: &prg_test_ctx.payer.pubkey(),
             category_metadata: &category_metadata,
             category_member: &member,
@@ -168,7 +166,7 @@ async fn test_offer() {
     let ix = remove_member(
         remove_member::Accounts {
             name_service_program: &spl_name_service::ID,
-            system_program: &system_program::ID,
+            system_program: &solana_system_interface::program::ID,
             fee_payer: &prg_test_ctx.payer.pubkey(),
             category_metadata: &category_metadata,
             category_member: &member,

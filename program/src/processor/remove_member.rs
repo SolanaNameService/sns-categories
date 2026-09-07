@@ -1,22 +1,21 @@
 //! Remove category member
 
 use crate::{
-    cpi, error::SnsCategoriesError, state::category_metadata::CategoryMetadata, state::Tag,
+    cpi, error::SnsCategoriesError, state::Tag, state::category_metadata::CategoryMetadata,
     utils::get_category_member_key,
 };
 use {
     bonfida_utils::{
-        checks::{check_account_key, check_account_owner, check_signer},
         BorshSize, InstructionsAccount,
+        checks::{check_account_key, check_account_owner, check_signer},
     },
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::program_pack::Pack,
     solana_program::{
-        account_info::{next_account_info, AccountInfo},
+        account_info::{AccountInfo, next_account_info},
         entrypoint::ProgramResult,
         program_error::ProgramError,
         pubkey::Pubkey,
-        system_program,
     },
     spl_name_service::state::NameRecordHeader,
 };
@@ -73,7 +72,10 @@ impl<'a, 'b: 'a> Accounts<'a, AccountInfo<'b>> {
         };
 
         // Check keys
-        check_account_key(accounts.system_program, &system_program::ID)?;
+        check_account_key(
+            accounts.system_program,
+            &solana_system_interface::program::ID,
+        )?;
         check_account_key(accounts.name_service_program, &spl_name_service::ID)?;
         check_account_key(accounts.central_state, &crate::central_state::KEY)?;
         #[cfg(not(feature = "no-signer"))]
@@ -111,7 +113,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], params: Params) ->
 
     cpi::name_service_update(
         0,
-        category_metadata.try_to_vec().unwrap(),
+        borsh::to_vec(&category_metadata)?,
         cpi::NameServiceUpdateAccounts {
             name_account: accounts.category_metadata,
             name_service_program: accounts.name_service_program,

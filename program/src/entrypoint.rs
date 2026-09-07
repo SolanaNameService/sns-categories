@@ -3,8 +3,8 @@ use crate::{error::SnsCategoriesError, processor::Processor};
 use {
     num_traits::FromPrimitive,
     solana_program::{
-        account_info::AccountInfo, decode_error::DecodeError, entrypoint::ProgramResult, msg,
-        program_error::PrintProgramError, pubkey::Pubkey,
+        account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
+        pubkey::Pubkey,
     },
 };
 
@@ -21,26 +21,17 @@ pub fn process_instruction(
 ) -> ProgramResult {
     msg!("Entrypoint");
     if let Err(error) = Processor::process_instruction(program_id, accounts, instruction_data) {
-        // catch the error so we can print it
-        error.print::<SnsCategoriesError>();
+        match &error {
+            ProgramError::Custom(error_id) => {
+                if let Some(local_error) = SnsCategoriesError::from_u32(*error_id) {
+                    msg!("Error: {}", local_error);
+                } else {
+                    msg!("External custom program error: {:#x}", error_id);
+                }
+            }
+            error => msg!("Error: {}", error),
+        }
         return Err(error);
     }
     Ok(())
-}
-
-impl PrintProgramError for SnsCategoriesError {
-    fn print<E>(&self)
-    where
-        E: 'static + std::error::Error + DecodeError<E> + PrintProgramError + FromPrimitive,
-    {
-        match self {
-            SnsCategoriesError::AlreadyInitialized => {
-                msg!("Error: This account is already initialized")
-            }
-            SnsCategoriesError::DataTypeMismatch => msg!("Error: Data type mismatch"),
-            SnsCategoriesError::WrongOwner => msg!("Error: Wrong account owner"),
-            SnsCategoriesError::Uninitialized => msg!("Error: Account is uninitialized"),
-            SnsCategoriesError::Overflow => msg!("Error: Numerical overflow"),
-        }
-    }
 }

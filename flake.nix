@@ -21,10 +21,10 @@
     {
       devShells."x86_64-linux".default = pkgs.mkShell {
         buildInputs = [
-          # pkgs.cargo
-          # pkgs.rustc
-          # pkgs.rustfmt
-          # pkgs.clippy
+          pkgs.cargo
+          pkgs.rustc
+          pkgs.rustfmt
+          pkgs.clippy
           pkgs.rust-analyzer
           pkgs.openssl
           solana-nix.packages.x86_64-linux.solana-rust
